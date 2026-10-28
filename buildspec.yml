@@ -21,7 +21,7 @@ phases:
   post_build:
     commands:
       - echo "Syncing files to S3..."
-      - aws s3 sync ./build s3://s3-kjb-cloudfront --delete
+      - aws s3 sync ./dist s3://s3-kjb-cloudfront/build --delete
       - echo "Creating CloudFront invalidation..."
       - aws cloudfront create-invalidation --distribution-id arn:aws:cloudfront::E3I0ZLOOY1CJI1 --paths "/*"
 
