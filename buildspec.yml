@@ -6,7 +6,7 @@ phases:
       nodejs: 26
     commands:
       - echo "Installing dependencies..."
-      - corepakc enable
+      - corepack enable
 
   pre_build:
     commands:
