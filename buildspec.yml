@@ -1,26 +1,25 @@
 version: 0.2
 
-phases:
-  install:
-    runtime-versions:
-      nodejs: 26
-    commands:
-      - echo "Installing dependencies..."
-      - corepack enable
+env:
+  variables:
+    AWS_ACCOUNT_ID: '246477585940'
+    IMAGE_REPO_NAME: realworld-web
 
+phases:
+  # ECR 주소 설정 및 로그인
   pre_build:
     commands:
-      - echo "Running tests or linters (optional)..."
+      - REGISTRY=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - IMAGE_URI=$REGISTRY/$IMAGE_REPO_NAME
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $REGISTRY
 
+  # Dockerfile로 이미지 생성
   build:
     commands:
-      - echo "Building the application..."
-      - pnpm install --frozen-lockfile
-      - pnpm build
+      - docker build -t $IMAGE_URI:latest .
 
+  # 빌드 성공 시 ECR에 업로드
   post_build:
     commands:
-      - echo "Syncing files to S3..."
-      - aws s3 sync ./dist s3://s3-kjb-cloudfront/build --delete
-      - echo "Creating CloudFront invalidation..."
-      - aws cloudfront create-invalidation --distribution-id E3I0ZLOOY1CJI1 --paths "/*"
+      - test "$CODEBUILD_BUILD_SUCCEEDING" = "1"
+      - docker push $IMAGE_URI:latest
