@@ -2,8 +2,8 @@ version: 0.2
 
 env:
   variables:
-    AWS_ACCOUNT_ID: '246477585940'
-    IMAGE_REPO_NAME: realworld-web
+    AWS_ACCOUNT_ID: '872112794360'
+    IMAGE_REPO_NAME: realworld/ecr-kjb-web
 
 phases:
   # ECR 주소 설정 및 로그인
